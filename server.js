@@ -16,29 +16,33 @@ app.get('/grow-stock', async (req, res) => {
     const $ = cheerio.load(response.data);
 
     const seeds = [];
-    $('.seed-item').each((i, el) => {
-      const name = $(el).find('.name').text().trim();
-      const count = $(el).find('.count').text().trim();
-      seeds.push({ name, count });
+    $('[data-stock-group="씨앗"] .stock-card').each((i, el) => {
+      const name = $(el).find('.stock-name').text().trim();
+      const count = $(el).find('.stock-count').text().trim();
+      if (name && count) seeds.push({ name, count });
     });
 
     const eggs = [];
-    $('.egg-item').each((i, el) => {
-      const name = $(el).text().trim();
-      eggs.push(name);
+    $('[data-stock-group="에그"] .stock-card').each((i, el) => {
+      const name = $(el).find('.stock-name').text().trim();
+      if (name) eggs.push(name);
     });
 
     const gears = [];
-    $('.gear-item').each((i, el) => {
-      const name = $(el).find('.name').text().trim();
-      const count = $(el).find('.count').text().trim();
-      gears.push({ name, count });
+    $('[data-stock-group="기어샵"] .stock-card').each((i, el) => {
+      const name = $(el).find('.stock-name').text().trim();
+      const count = $(el).find('.stock-count').text().trim();
+      if (name && count) gears.push({ name, count });
     });
 
     res.json({ seeds, eggs, gears });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
+app.get('/', (req, res) => {
+  res.send('Grow Stock Bot is running');
 });
 
 app.listen(PORT, () => {
